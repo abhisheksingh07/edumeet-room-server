@@ -1,8 +1,8 @@
 process.title = 'edumeet-room-server';
 
-import fs from 'fs';
-import https from 'https';
-import http from 'http';
+import * as fs from 'fs';
+import * as https from 'https';
+import * as http from 'http';
 import ServerManager from './ServerManager';
 import { Server as IOServer } from 'socket.io';
 import { interactiveServer } from './interactiveServer';
@@ -26,14 +26,14 @@ logger.debug('Starting... [config: %o]', config);
 
 const mediaService = MediaService.create();
 
-let managementService: ManagementService | undefined;
+// let managementService: ManagementService | undefined;
 
-if (config.managementService)
-	managementService = new ManagementService({ managedPeers, managedRooms, mediaService });
+// if (config.managementService)
+// 	managementService = new ManagementService({ managedPeers, managedRooms, mediaService });
 
-const serverManager = new ServerManager({ peers, rooms, managedRooms, managedPeers, mediaService, managementService });
+const serverManager = new ServerManager({ peers, rooms, managedRooms, managedPeers, mediaService });
 
-interactiveServer(serverManager, managementService);
+interactiveServer(serverManager);
 
 let webServer: http.Server | https.Server;
 

@@ -1,6 +1,6 @@
 import { MediaNodeConfig } from './MediaService';
 import { RoomRole } from './common/types';
-import fs from 'fs';
+import * as fs from 'fs';
 
 let config: Config;
 

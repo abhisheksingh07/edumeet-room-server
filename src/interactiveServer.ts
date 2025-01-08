@@ -1,9 +1,9 @@
-import os from 'os';
-import path from 'path';
-import repl from 'repl';
-import readline from 'readline';
-import net from 'net';
-import fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import * as repl from 'repl';
+import * as readline from 'readline';
+import * as net from 'net';
+import * as fs from 'fs';
 import ServerManager from './ServerManager';
 import { Logger } from 'edumeet-common';
 import ManagementService from './ManagementService';
@@ -125,7 +125,7 @@ class InteractiveServer {
 
 export const interactiveServer = (serverManager: ServerManager, managementService?: ManagementService) => {
 	global.serverManager = serverManager;
-	global.managementService = managementService;
+	// global.managementService = managementService;
 
 	const server = net.createServer((socket) => {
 		const interactive = new InteractiveServer(socket);

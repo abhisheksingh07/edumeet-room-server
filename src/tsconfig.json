@@ -1,10 +1,27 @@
 {
 	"extends": "@tsconfig/node20/tsconfig.json",
 	"compilerOptions": {
-		"experimentalDecorators": true,
-		"resolveJsonModule": true,
-		"outDir": "../dist",
-		"sourceMap": true,
+	  "target": "ES2020",
+	  "module": "Node16",
+	  "experimentalDecorators": true,
+	  "resolveJsonModule": true,
+	  "esModuleInterop": true,
+	  "skipLibCheck": true,
+	  "forceConsistentCasingInFileNames": true,
+	  "outDir": "../dist",
+	  "rootDir": ".",
+	  "sourceMap": true,
+	  "strict": true,
+	  "noImplicitAny": true,
+	  "typeRoots": ["./node_modules/@types", "./src/types"]
 	},
-	"include": ["**/*.ts"]
-}
+	"include": ["**/*.ts", "src/types/global.d.ts"],
+	"exclude": ["node_modules", "dist"],
+	"ts-node": {
+	  "transpileOnly": true,
+	  "compilerOptions": {
+		"target": "ES2020"
+	  }
+	}
+  }
+  

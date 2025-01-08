@@ -28,7 +28,7 @@ export default class ServerManager {
 	public mediaService: MediaService;
 	public managementService?: ManagementService;
 
-	constructor({ mediaService, peers, rooms, managedPeers, managedRooms, managementService }: ServerManagerOptions) {
+	constructor({ mediaService, peers, rooms, managedPeers, managedRooms }: ServerManagerOptions) {
 		logger.debug('constructor()');
 
 		this.mediaService = mediaService;
@@ -36,7 +36,7 @@ export default class ServerManager {
 		this.rooms = rooms;
 		this.managedPeers = managedPeers;
 		this.managedRooms = managedRooms;
-		this.managementService = managementService;
+		// this.managementService = managementService;
 	}
 
 	@skipIfClosed

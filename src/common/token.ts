@@ -1,4 +1,5 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { getConfig } from '../Config';
 
 const config = getConfig();
