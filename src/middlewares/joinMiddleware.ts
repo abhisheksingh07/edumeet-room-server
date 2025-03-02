@@ -4,6 +4,7 @@ import { thisSession } from '../common/checkSessionId';
 import { PeerContext } from '../Peer';
 import Room from '../Room';
 import { createConsumers } from '../common/consuming';
+import * as jwt from 'jsonwebtoken';
 
 const logger = new Logger('JoinMiddleware');
 
@@ -27,11 +28,13 @@ export const createJoinMiddleware = ({ room }: { room: Room; }): Middleware<Peer
 				const {
 					displayName,
 					picture,
+					token
 				} = message.data;
 
 				peer.displayName = displayName;
 				peer.picture = picture;
-
+				peer.token = token;
+				logger.debug('createJoinMiddleware() [room: %s, peer: %s, displayName: %s, picture: %s, token: %s]', room.sessionId, peer.id, displayName, picture, token);
 				const lobbyPeers = peer.hasPermission(Permission.PROMOTE_PEER) ?
 					room.lobbyPeers.items.map((p) => (p.peerInfo)) : [];
 

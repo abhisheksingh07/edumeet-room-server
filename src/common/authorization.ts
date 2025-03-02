@@ -1,6 +1,9 @@
 import { Peer } from '../Peer';
 import Room from '../Room';
 import { ManagedGroup, ManagedGroupRole, ManagedGroupUser, ManagedRole, ManagedRolePermission, ManagedRoom, ManagedRoomOwner, ManagedUserRole, MediaSourceType, RoomSettings } from './types';
+import { Logger } from 'edumeet-common';
+
+const logger = new Logger('Authorization');
 
 /* eslint-disable no-unused-vars, no-shadow */
 export enum Permission {
@@ -72,7 +75,9 @@ export const updatePeerPermissions = (room: Room, peer: Peer, inLobby = false): 
 	let shouldPromote = false;
 	let shouldGiveLobbyPeers = false;
 
-	if (room.owners.find((o) => o.userId === peer.managedId)) { // Owner gets everything
+	if (room.owners.find((o) => o.userId === peer.managedId)) { 
+		// Owner gets everything
+		
 		peer.permissions = allPermissions;
 
 		shouldPromote = inLobby;

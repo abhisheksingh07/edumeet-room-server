@@ -110,6 +110,13 @@ export const createPeerMiddleware = ({ room }: { room: Room; }): Middleware<Peer
 				break;
 			}
 
+			case 'clientSample': {
+				logger.debug('clientSample() [schemaVersion:%o]', message?.data?.schemaVersion);
+				logger.debug('clientSample() [encodedSample:%o]', message?.data?.encodedSample);
+				context.handled = true;
+				break;
+			}
+
 			default: {
 				break;
 			}
