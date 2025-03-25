@@ -1,8 +1,13 @@
 import { Socket } from "socket.io";
 import { Logger } from "edumeet-common";
 import { IOServerConnection } from "./IOServerConnection";
+import * as jwt from "jsonwebtoken";
+import { getConfig } from "../Config";
+
 
 const logger = new Logger("socketHandler");
+const config = getConfig();
+const signingKeys = config.jwtSignKey;
 
 export const socketHandler = (socket: Socket) => {
   const { roomId, peerId, tenantId, displayName, token } =
@@ -16,9 +21,10 @@ export const socketHandler = (socket: Socket) => {
     tenantId,
     token
   );
+  
 
-  if (!roomId || !peerId) {
-    logger.warn("socket invalid roomId or peerId");
+  if (!roomId || !peerId || !token) {
+    logger.warn("socket invalid roomId or peerId or token");
 
     return socket.disconnect(true);
   }
@@ -31,12 +37,12 @@ export const socketHandler = (socket: Socket) => {
       peerId as string,
       roomId as string,
       tenantId as number | undefined,
-      displayName as string,
-      token as string
+      token as string,
+      displayName as string
     );
-  } catch (error) {
-    logger.warn("handleConnection() [error: %o]", error);
-
+  } catch (error: any) {
+    logger.warn("handleConnection() error prints [error: %o]", error.message);
+    socket.emit("error", { message: error.message });
     socketConnection.close();
   }
 };

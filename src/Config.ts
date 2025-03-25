@@ -12,6 +12,7 @@ export function getConfig(): Config {
 			config = JSON.parse(rawConfig);
 		} catch (e) {
 			config = {
+				jwtSignKey: 'secret',
 				listenHost: '0.0.0.0',
 				listenPort: '8443',
 				defaultRoomSettings: {
@@ -54,6 +55,7 @@ export interface Config {
 		host: string;
 		jwtPublicKeys: string[];
 	};
+	jwtSignKey: string;	
 	defaultRoomSettings?: {
 		defaultRole?: RoomRole;
 		locked?: boolean;

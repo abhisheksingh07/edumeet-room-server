@@ -4,12 +4,29 @@ import MediaService from "./MediaService";
 import { Peer } from "./Peer";
 import Room from "./Room";
 import ManagementService from "./ManagementService";
-import { RoomSettings, RoomRole, ManagedRole } from "./common/types";
+import { RoomSettings } from "./common/types";
 import { getConfig } from "./Config";
 import * as jwt from "jsonwebtoken";
 
 const logger = new Logger("ServerManager");
 const config = getConfig();
+const signingKeys = config.jwtSignKey;
+
+
+interface verifyToken {
+  iss: string;
+  aud: string;
+  sub: string;
+  roomname: string;
+  roleName: string;
+  nbf: number;
+  exp: number;
+  username: string;
+  email: string;
+  passcode: string;
+  tz: string;
+  iat: number;
+}
 
 interface ServerManagerOptions {
   mediaService: MediaService;
@@ -67,8 +84,8 @@ export default class ServerManager {
     peerId: string,
     roomId: string,
     tenantId = 0,
+    token: string,
     displayName?: string,
-    token?: string
   ): void {
     logger.debug(
       "handleConnection() [peerId: %s, displayName: %s, roomId: %s, tenantId: %s]",
@@ -77,7 +94,21 @@ export default class ServerManager {
       roomId,
       tenantId
     );
-
+    let verifytoken
+    try {
+      verifytoken = token && typeof token === 'string' ? (jwt.verify(token, signingKeys) as any) : undefined;
+    } catch (error:any) {
+      if (error.name === 'TokenExpiredError') {
+        logger.error('JWT expired');
+        throw new Error('JWT expired');
+      } else if (error.name === 'JsonWebTokenError') {
+        logger.error('JWT not active');
+        throw new Error('JWT not active');
+      } else {
+        logger.error('JWT verification error');
+        throw new Error('JWT verification error');
+      }
+    }
     const managedId = token ? verifyPeer(token) : undefined;
     let peer = this.peers.get(peerId);
 
@@ -115,14 +146,7 @@ export default class ServerManager {
 
         if (room?.managedId) this.managedRooms.delete(room.managedId);
       });
-      const { roleName } = token
-        ? (jwt.decode(token) as {
-            roleName: keyof typeof config.defaultRoomSettings;
-          })
-        : {
-            roleName: "defaultRole" as keyof typeof config.defaultRoomSettings,
-          };
-
+      const { roleName } = verifytoken ? verifytoken : { roleName: "Default" } as { roleName: keyof typeof config.defaultRoomSettings };
       if (config.defaultRoomSettings) {
         const {
           defaultRole,
@@ -135,8 +159,8 @@ export default class ServerManager {
           localRecordingEnabled = true,
         } = config.defaultRoomSettings;
 
-        room.defaultRole =
-          config.defaultRoomSettings?.[roleName] || defaultRole;
+        const role = config.defaultRoomSettings?.[roleName as keyof typeof config.defaultRoomSettings];
+        room.defaultRole = (typeof role === 'string' || typeof role === 'object') ? role : defaultRole;
         room.maxActiveVideos = maxActiveVideos;
         room.locked = locked;
         room.breakoutsEnabled = breakoutsEnabled;

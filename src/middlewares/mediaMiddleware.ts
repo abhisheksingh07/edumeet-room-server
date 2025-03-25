@@ -417,10 +417,6 @@ export const createMediaMiddleware = ({ room }: { room: Room; }): Middleware<Pee
 
 				break;
 			}
-
-			default: {
-				break;
-			}
 		}
 
 		return next();
